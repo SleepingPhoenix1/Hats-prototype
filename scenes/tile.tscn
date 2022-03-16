@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scripts/tile.gd" type="Script" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 32, 16 )
+
+[node name="tile" type="Node2D"]
+script = ExtResource( 2 )
+tile_WIDTH = 4
+tile_HEIGHT = 2
+tile_size = 8
+
+[node name="tile_manager" type="Node2D" parent="."]
+
+[node name="Coords" type="RichTextLabel" parent="."]
+visible = false
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 64.0
+margin_bottom = 32.0
+
+[node name="Area2D" type="Area2D" parent="."]
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2( 32, 16 )
+shape = SubResource( 1 )

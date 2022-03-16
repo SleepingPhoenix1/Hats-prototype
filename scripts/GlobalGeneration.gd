@@ -14,8 +14,7 @@ var current_chunk
 
 func _ready():
 	#Engine.target_fps = 60
-	pass
-
+	
 	
 	randomize()
 	openSimplexNoise.seed = 2
@@ -30,7 +29,7 @@ func _ready():
 	
 	openSimplexNoise2.seed = 5
 	openSimplexNoise2.octaves = 3
-	openSimplexNoise2.period = 45
+	openSimplexNoise2.period = 32
 	openSimplexNoise2.persistence = .7
 
 

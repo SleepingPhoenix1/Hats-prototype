@@ -4,11 +4,11 @@
 [ext_resource path="res://scripts/tile_generator.gd" type="Script" id=2]
 
 [node name="Node2D" type="Node2D"]
+
+[node name="chunks" type="Node2D" parent="."]
 script = ExtResource( 2 )
-player_path = NodePath("KinematicBody2D")
-render_distance = 6
-chunk_size_v = 32.0
-chunk_size_h = 64.0
+player_path = NodePath("../KinematicBody2D")
+chunk_size_h = 128.0
 
 [node name="KinematicBody2D" parent="." instance=ExtResource( 1 )]
 position = Vector2( 120, -56 )

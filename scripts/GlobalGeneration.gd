@@ -1,6 +1,6 @@
 extends Node
 
-var player
+
 
 var loaded_coords = []
 var data_in_chunk = []
@@ -10,10 +10,10 @@ var openSimplexNoise = OpenSimplexNoise.new()
 var openSimplexNoise2 = OpenSimplexNoise.new()
 var openSimplexNoise3 = OpenSimplexNoise.new()
 
-var current_chunk
+
 
 func _ready():
-	#Engine.target_fps = 60
+	Engine.target_fps = 60
 	
 	
 	randomize()
@@ -54,6 +54,5 @@ func retrive_data(coords):
 func retrive_chunk(coords):
 	var chunk = saved_chunks[loaded_coords.find(coords)]
 	return chunk
-
 
 

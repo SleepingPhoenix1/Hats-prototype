@@ -1,36 +1,38 @@
 extends Node2D
 
-### BLOCK LIST HERE ###
-var grass = preload("res://scenes/grass.tscn")
-var dirt = preload("res://scenes/dirt.tscn")
-var air = preload("res://scenes/air.tscn")
 
 
 
-export var tile_WIDTH = 10
-export var tile_HEIGHT = 20
+export var tile_WIDTH :int = 10
+export var tile_HEIGHT :int = 20
 
-export var tile_size = 16
+export var tile_size : int = 16
 
-var chunk_coords = Vector2()
+var chunk_coords : Vector2 = Vector2()
 var chunk_data = []
 
 func _ready():
-	pass
+	randomize()
+	
 
 func generate_tile():
+	randomize()
 	for x in tile_WIDTH:
 		for y in tile_HEIGHT:
 			var rand = GlobalGen.openSimplexNoise.get_noise_1d(x+tile_WIDTH*chunk_coords.x)
 			var rand2 = GlobalGen.openSimplexNoise2.get_noise_1d(x+tile_WIDTH*chunk_coords.x)
 			var rand3 = GlobalGen.openSimplexNoise3.get_noise_1d(x+tile_WIDTH*chunk_coords.x)
 			rand *=4
+			rand3 *=2
 			rand += rand2
 			rand -= rand3
 			if ceil(rand*10) == global_position.y/tile_size + y:
-				add_block(grass,x,y)
+				$tile_manager/TileMap.set_cell(x,y,0)
+				var tree_fen : int = round(rand_range(0,12))
+				if tree_fen == 1:
+					GenFeature.generate_tree_stem(get_parent(),$tile_manager/TileMap, chunk_coords, x,y-1, 12)
 			elif ceil(rand*10) < global_position.y/ tile_size + y:
-				add_block(dirt,x,y)
+				$tile_manager/TileMap.set_cell(x,y,1)
 			#elif ceil(rand*10) > global_position.y/ tile_size + y:
 			#	add_block(air,x,y)
 
@@ -38,16 +40,17 @@ func generate_tile():
 
 
 func _process(delta):
-	var mouse_pos = Vector2(int(get_global_mouse_position().x/ 16), int(get_global_mouse_position().y/ 16))
+	var mouse_pos = get_global_mouse_position()/8
+	mouse_pos.x -= tile_WIDTH * chunk_coords.x
+	mouse_pos.y -= tile_HEIGHT * chunk_coords.y
 	
-	if Input.is_action_pressed("left_click") and GlobalGen.current_chunk == chunk_coords:
-		_on_tilemap_changed()
-		add_block(grass,mouse_pos.x, mouse_pos.y)
-	if Input.is_action_just_pressed("left_click"):
+	if Input.is_action_pressed("left_click") and get_mouse_chunk() == chunk_coords:
+		save()
+		$tile_manager/TileMap.set_cellv(mouse_pos,2)
+	elif Input.is_action_pressed("right_click")  and get_mouse_chunk() == chunk_coords:
+		$tile_manager/TileMap.set_cellv(mouse_pos,-1)
 		save()
 		
-	elif Input.is_action_pressed("right_click"):
-		add_block(air,mouse_pos.x, mouse_pos)
 	
 
 func start(_chunk_coords):
@@ -62,17 +65,16 @@ func start(_chunk_coords):
 	else:
 		if GlobalGen.retrive_chunk(chunk_coords) != null:
 			if has_node("tile_manager"):
-				remove_child($tile_manager)
+				$tile_manager.free()
 			add_child(GlobalGen.retrive_chunk(chunk_coords).instance())
-			#get_node("ColorRect").color = Color(.6,1,0,0.1)
+			get_node("ColorRect").color = Color(.6,1,0,0.1)
 	
 
 func delete_chunk():
 	queue_free()
 
 
-func _on_tilemap_changed():
-	save()
+
 
 func save():
 	for i in $tile_manager.get_children():
@@ -81,20 +83,24 @@ func save():
 	tile.pack(get_node("tile_manager"))
 	GlobalGen.save_chunk(chunk_coords, tile)
 
-func add_block(block,x,y):
-	var block_instance = block.instance()
-	block_instance.position.x = x * tile_size
-	block_instance.position.y = y * tile_size
-	$tile_manager.add_child(block_instance)
 
 
-
-func get_mouse_pos():
+### OUTPUTS COORDS OF A CHUNK MOUSE IN ###
+func get_mouse_chunk():
 	var chunk_pos = Vector2()
-	chunk_pos.y = int(get_global_mouse_position().y/8)
-	chunk_pos.x = int(get_global_mouse_position().x/8)
+	chunk_pos.y = int(get_global_mouse_position().y/ (tile_HEIGHT*tile_size))
+	chunk_pos.x = int(get_global_mouse_position().x/ (tile_WIDTH*tile_size))
 	if get_global_mouse_position().x < 0:
 		chunk_pos.x -= 1
 	if get_global_mouse_position().y < 0:
 		chunk_pos.y -= 1
 	return chunk_pos
+
+
+func generate_tree(tile_generator, x,y, height):
+	GenFeature.generate_tree_stem(tile_generator,$tile_manager/TileMap, chunk_coords, x,y,height)
+
+func find_chunk(coords):
+	for i in get_parent().get_children():
+		if i.chunk_coords == coords:
+			return i

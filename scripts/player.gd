@@ -46,15 +46,15 @@ export var slower_fall_mult = 20
 #WALL STUFF VARIABLES
 onready var left_wall_raycasts = $WallRaycastsLeft
 onready var right_wall_raycasts = $WallRaycastsRight
-var wall_direction = 0
+var wall_direction : int= 0
 export var max_wall_slide_speed = 20
 export var Wall_jump_Velocity = Vector2(10, 10)
 var has_wall_jumped =false
 export var wall_climb_speed = 50
 
-var can_wall_climb = true
-var is_wall_climbing = false
-var is_wall_sliding = false
+var can_wall_climb : bool= true
+var is_wall_climbing : bool = false
+var is_wall_sliding : bool = false
 
 #stamina
 export var max_stamina = 200
@@ -70,7 +70,6 @@ func _ready():
 	
 
 func _process(delta):
-	GlobalGen.player = self
 	#get main tile
 	
 	
@@ -104,7 +103,8 @@ func _physics_process(delta):
 	_update_wall_directions()
 	animations()
 	dashing()
-	#print(velocity.x)
+	
+	
 	
 	###### JUMP BUFFERING ######
 	if $jumpBuffer.is_colliding() and Input.is_action_just_pressed("ui_jump") and velocity.y > 0:

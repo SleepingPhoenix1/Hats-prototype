@@ -17,6 +17,7 @@ config/icon="res://icon.png"
 [autoload]
 
 GlobalGen="*res://scripts/GlobalGeneration.gd"
+GenFeature="*res://scripts/generate_feature.gd"
 
 [display]
 

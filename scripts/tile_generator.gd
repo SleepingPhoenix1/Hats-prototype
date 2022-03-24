@@ -37,9 +37,9 @@ func _ready():
 	load_chunk()
 
 #Checks if the player is in a new chunk every frame
+# warning-ignore:unused_argument
 func _physics_process(delta):
 	current_chunk = _get_player_chunk(player.global_position)
-	GlobalGen.current_chunk = current_chunk
 	if previous_chunk != current_chunk:
 		if !chunk_loaded:
 			load_chunk()
@@ -81,6 +81,7 @@ func load_chunk():
 			
 			#the chunk key is the key the chunk will use to retreive data from the world save
 			#it depends on the no of revolutions and the chunk coords
+# warning-ignore:unused_variable
 			var chunk_key = _get_chunk_key(chunk_coords)
 			loading_coord.append(chunk_coords)
 			#loading chunks stores the coords that are in the new render chunk
